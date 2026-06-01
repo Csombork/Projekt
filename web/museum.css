@@ -91,7 +91,7 @@ body {
 
 /* Elhajtott (lefelé pörgött) állapot */
 .page.flipped {
-    transform: rotateX(-180deg);
+    transform: rotateX(180deg);
 }
 
 /* ── Lap belső felülete ── */
