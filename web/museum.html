@@ -10,82 +10,86 @@
 
 <div class="book">
 
-    <div class="page active">
+    <!-- Spirál fogó a tetején -->
+    <div class="spiral-bar">
+        <div class="spiral-rings"></div>
+    </div>
 
-        <div class="left">
-            <div class="year">2024</div>
-            <div class="subtitle">100 éves jubileum</div>
+    <!-- Lapok – felülről lefelé hajtódnak -->
+    <div class="pages-container">
 
-            <div class="text">
-                Iskolánk fennállásának századik évfordulóját ünnepli.
-                Egy évszázad története, sikerei és közössége.
+        <div class="page" data-index="0">
+            <div class="page-inner front">
+                <div class="left">
+                    <div class="year">2024</div>
+                    <div class="subtitle">100 éves jubileum</div>
+                    <div class="text">
+                        Iskolánk fennállásának századik évfordulóját ünnepli.
+                        Egy évszázad története, sikerei és közössége.
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="image"
+                        style="background-image:url('https://picsum.photos/id/1040/900/600')">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="right">
-            <div class="image"
-            style="background-image:url('https://picsum.photos/id/1040/900/600')">
+        <div class="page" data-index="1">
+            <div class="page-inner front">
+                <div class="left">
+                    <div class="year">1980</div>
+                    <div class="subtitle">Fejlődés időszaka</div>
+                    <div class="text">
+                        Új tantermek, új lehetőségek,
+                        bővülő közösség.
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="image"
+                        style="background-image:url('https://picsum.photos/id/1067/900/600')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" data-index="2">
+            <div class="page-inner front">
+                <div class="left">
+                    <div class="year">1924</div>
+                    <div class="subtitle">Az alapítás éve</div>
+                    <div class="text">
+                        Az első épület és az első tanulók.
+                        Innen kezdődött a történet.
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="image"
+                        style="background-image:url('https://picsum.photos/id/1050/900/600')">
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
+    <!-- /pages-container -->
 
-    <div class="page hidden">
-
-        <div class="left">
-            <div class="year">1980</div>
-            <div class="subtitle">Fejlődés időszaka</div>
-
-            <div class="text">
-                Új tantermek, új lehetőségek,
-                bővülő közösség.
-            </div>
-        </div>
-
-        <div class="right">
-            <div class="image"
-            style="background-image:url('https://picsum.photos/id/1067/900/600')">
-            </div>
-        </div>
-
-    </div>
-
-    <div class="page hidden">
-
-        <div class="left">
-            <div class="year">1924</div>
-            <div class="subtitle">Az alapítás éve</div>
-
-            <div class="text">
-                Az első épület és az első tanulók.
-                Innen kezdődött a történet.
-            </div>
-        </div>
-
-        <div class="right">
-            <div class="image"
-            style="background-image:url('https://picsum.photos/id/1050/900/600')">
-            </div>
-        </div>
-
-    </div>
-
-    <div class="spiral"></div>
-
+    <!-- Navigációs gombok jobb oldalt -->
     <div class="controls">
-        <button class="btn" id="up">▲</button>
-        <button class="btn" id="down">▼</button>
+        <button class="btn" id="up" title="Előre az időben">▲</button>
+        <button class="btn" id="down" title="Vissza az időben">▼</button>
     </div>
 
+    <!-- Időegyenes alul -->
     <div class="timeline">
-        <span>2024</span>
-        <span>1980</span>
-        <span>1924</span>
+        <span data-index="0">2024</span>
+        <span data-index="1">1980</span>
+        <span data-index="2">1924</span>
     </div>
 
 </div>
 
 <script src="museum.js"></script>
-
 </body>
 </html>

@@ -1,187 +1,260 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    height:100vh;
-    background:#e7e1d6;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family:Georgia, serif;
-    overflow:hidden;
+body {
+    height: 100vh;
+    background: #e7e1d6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Georgia, serif;
+    overflow: hidden;
 }
 
-.book{
-    width:90%;
-    max-width:1200px;
-    height:85vh;
-    position:relative;
-    perspective:2000px;
+/* ── Könyv / naptár keret ── */
+.book {
+    width: 90%;
+    max-width: 1200px;
+    height: 85vh;
+    position: relative;
 }
 
-.page{
-    position:absolute;
-    width:100%;
-    height:100%;
-    background:
-        linear-gradient(
-            180deg,
-            #f8f3e8,
-            #f1eadc
-        );
-
-    border-radius:10px;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.18);
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:70px;
-    transition:
-        transform 0.9s cubic-bezier(.22,.61,.36,1),
-        opacity 0.9s;
-
-    transform-origin:center center;
+/* ── Spirál sáv a tetején ── */
+.spiral-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    pointer-events: none;
 }
 
-.page.hidden{
-    opacity:0;
-    pointer-events:none;
-    transform:translateY(120px) scale(.95);
-}
-
-.page.active{
-    opacity:1;
-    transform:translateY(0) scale(1);
-}
-
-.left{
-    width:40%;
-}
-
-.right{
-    width:50%;
-}
-
-.year{
-    font-size:6rem;
-    color:#8a6c3f;
-    margin-bottom:20px;
-}
-
-.subtitle{
-    font-size:2rem;
-    color:#5e4a2a;
-    margin-bottom:20px;
-}
-
-.text{
-    line-height:1.8;
-    color:#444;
-    font-size:1.1rem;
-}
-
-.image{
-    width:100%;
-    height:420px;
-    border-radius:8px;
-
-    background-size:cover;
-    background-position:center;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.2);
-}
-
-.controls{
-    position:absolute;
-    right:-100px;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.btn{
-    width:60px;
-    height:60px;
-    border:none;
-    border-radius:50%;
-    cursor:pointer;
-
-    background:#20304f;
-    color:white;
-
-    font-size:24px;
-
-    transition:.3s;
-}
-
-.btn:hover{
-    transform:scale(1.1);
-}
-
-.spiral{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:-15px;
-    height:40px;
-
+.spiral-rings {
+    width: 100%;
+    height: 22px;
     background:
         repeating-linear-gradient(
             90deg,
-            #111 0px,
-            #111 6px,
-            transparent 6px,
-            transparent 28px
+            transparent       0px,
+            transparent       6px,
+            #1a1a1a           6px,
+            #1a1a1a          12px,
+            transparent      12px,
+            transparent      34px
         );
+    mask-image: radial-gradient(
+        ellipse 10px 11px at center,
+        black 60%,
+        transparent 100%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse 10px 11px at center,
+        black 60%,
+        transparent 100%
+    );
+    mask-size: 34px 22px;
+    -webkit-mask-size: 34px 22px;
+    mask-repeat: repeat-x;
+    -webkit-mask-repeat: repeat-x;
+    background-color: #333;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
 
-.timeline{
-    position:absolute;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-
-    display:flex;
-    gap:40px;
-    color:#7b6b50;
+/* ── Lapok tartója ── */
+.pages-container {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    perspective: 2200px;
+    perspective-origin: 50% 0%;   /* a vetítés a tetejéből indul */
 }
 
-.timeline span.active{
-    color:#1d2d4c;
-    font-weight:bold;
+/* ── Egyedi lap ── */
+.page {
+    position: absolute;
+    inset: 0;
+    transform-origin: top center;  /* ← kulcs: felülről hajtódik */
+    transform-style: preserve-3d;
+    transition: transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
 }
 
-@media(max-width:900px){
+/* Elhajtott (lefelé pörgött) állapot */
+.page.flipped {
+    transform: rotateX(-180deg);
+}
 
-    .page{
-        flex-direction:column;
-        overflow:auto;
-    }
+/* ── Lap belső felülete ── */
+.page-inner {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 
-    .left,
-    .right{
-        width:100%;
-    }
+    background: linear-gradient(180deg, #f8f3e8, #f1eadc);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
 
-    .year{
-        font-size:4rem;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 70px;
+    overflow: hidden;
+}
 
-    .image{
-        height:250px;
-        margin-top:30px;
-    }
+/* Hajtás árnyéka a lap tetején – vizuális mélység */
+.page-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.07), transparent);
+    pointer-events: none;
+    border-radius: 0 0 0 0;
+}
 
-    .controls{
-        right:20px;
+/* Elhajtott lap hátlapja – sárgás pergamen */
+.page-inner.back {
+    transform: rotateX(180deg);
+    background: linear-gradient(180deg, #ede6d4, #e4dac8);
+}
+
+/* ── z-index rétegezés JS-ből ── */
+/* alapértelmezett: hátsó lapok mögötte vannak */
+
+/* ── Tartalom: bal és jobb oszlop ── */
+.left  { width: 40%; }
+.right { width: 50%; }
+
+.year {
+    font-size: 6rem;
+    color: #8a6c3f;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: 2rem;
+    color: #5e4a2a;
+    margin-bottom: 20px;
+}
+
+.text {
+    line-height: 1.8;
+    color: #444;
+    font-size: 1.1rem;
+}
+
+.image {
+    width: 100%;
+    height: 420px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Irányjelző nyilak (nav hint) ── */
+.flip-hint {
+    position: absolute;
+    right: -130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: Georgia, serif;
+    font-size: 0.72rem;
+    color: #7b6b50;
+    text-align: center;
+    line-height: 1.4;
+    pointer-events: none;
+}
+.flip-hint.hint-up   { top: 80px; }
+.flip-hint.hint-down { bottom: 100px; }
+.flip-hint .arrow-icon { font-size: 1.3rem; }
+
+/* ── Navigációs gombok ── */
+.controls {
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 300;
+}
+
+.btn {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #20304f;
+    color: white;
+    font-size: 24px;
+    transition: 0.3s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+.btn:hover  { transform: scale(1.1); }
+.btn:active { transform: scale(0.96); }
+.btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
+}
+
+/* ── Időegyenes ── */
+.timeline {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    color: #7b6b50;
+    z-index: 300;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.timeline span {
+    transition: color 0.3s, font-weight 0.3s;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.timeline span.active {
+    color: #1d2d4c;
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ── Reszponzív ── */
+@media (max-width: 900px) {
+    .page-inner {
+        flex-direction: column;
+        overflow: auto;
+        padding: 40px 30px;
     }
+    .left, .right { width: 100%; }
+    .year  { font-size: 4rem; }
+    .image { height: 250px; margin-top: 30px; }
+    .controls { right: 10px; }
+    .flip-hint { display: none; }
 }
